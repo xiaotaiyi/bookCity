@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--#include virtual="/include/head.html"-->
+
+<body>
+	<!--#include virtual="/include/top.html"-->
+	<div class="container body-content read-container">
+		<div id="app" v-cloak>
+			<div style="width:100%;text-align: center">
+				----------------------------邪恶分割线---------------------------</div>
+			<el-input type="textarea" :rows="6" v-model="fromM" style="margin-bottom:10px;" placeholder="请输入内容">
+			</el-input>
+			<samp style="margin-right:5px;">标题:</samp>
+			<el-input style="width:32%;" placeholder="请输入标题" v-model="fromTitle" clearable> </el-input>
+			<samp style="margin-right:5px;">摘要字数:</samp>
+			<el-select style="width:32%;" v-model="fromLen" placeholder="请选择">
+				<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+				</el-option>
+			</el-select>
+			<el-button type="primary" style="width: 100%;margin-top: 5px;margin-bottom: 5px;" @click="getAbstract()"
+				plain>生成摘要</el-button>
+			<el-input type="textarea" :rows="6" v-model="toM" :disabled="true">
+			</el-input>
+			<div style="width:100%;text-align: center">
+				----------------------------邪恶分割线----------------------------</div>
+			<el-button @click="recorderStart()" v-html="recorderText"></el-button>
+		</div>
+		<!--#include virtual="/include/footer.html"-->
+
+	</div>
+	<script src="./js/style.js"></script>
+</body>
+<script>
+	var vue = new Vue({
+		el: '#app',
+		data: {
+			fromM: '',
+			fromLen: '100',
+			fromTitle: '',
+			toM: '',
+			options: [{
+				value: '50',
+				label: '50字'
+			}, {
+				value: '100',
+				label: '100字'
+			}, {
+				value: '150',
+				label: '150字'
+			}, {
+				value: '200',
+				label: '200字'
+			}, {
+				value: '250',
+				label: '250字'
+			}],
+			recorderText: "录制",
+            recorderM: ''
+		},
+		methods: {
+			getAbstract: function() {
+				if (vue.fromM == '' || vue.fromM == null) {
+					vue.$message({ message: '内容不能为空', type: 'warning' });
+					return;
+				}
+
+				var api = "n-languageAbstract-query";
+				axios({
+					method: 'post',
+					url: uri + api,
+					headers: {
+						'Content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+					},
+					params: {
+						'title': vue.fromTitle ,
+						'len': vue.fromLen,
+						'content': vue.fromM
+					}
+				})
+				.then(function(result) {
+						vue.toM = result.data.data.content;
+				})
+				.catch(function(result) {
+						console.log(error);
+					}
+				);
+
+			},
+			recorderStart: function () {
+                if (this.recorderText == "录制") {
+                    recorder = new Recorder({
+                                        sampleBits: 16,         // 采样位数，范围8或16
+                                        sampleRate: 16000,      // 采样率，范围11025、16000、22050、24000、44100、48000
+                                        numChannels: 1,         // 声道，范围1或2   
+                                        });
+                    recorder.start();
+                    this.recorderText = "结束";
+                } else if (this.recorderText == "结束") {
+                    recorder.pause();
+                    this.recorderText = "播放";
+                } else {
+                    recorder.play();
+                }
+
+            }
+		}
+	})
+</script>
+
+</html>

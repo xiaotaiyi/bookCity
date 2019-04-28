@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--#include virtual="/include/head.html"-->
+<style>
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<body>
+    <!--#include virtual="/include/top.html"-->
+    <div class="container body-content">
+        <div id="app" v-cloak>
+            <el-timeline>
+                <el-timeline-item :timestamp="log.time" placement="top" v-for="log in versionLogs">
+                    <el-card>
+                        <h4><strong>更新内容:</strong>{{log.content}}</h4>
+                        <h4 v-if="log.new != ''" style="margin-top:5px"><strong>版本预告:</strong>{{log.new}}</h4>
+                    </el-card>
+                </el-timeline-item>
+            </el-timeline>
+        </div>
+        <!--#include virtual="/include/footer.html"-->
+    </div>
+</body>
+<script>
+
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            versionLogs:[]
+        },
+        mounted: function () { //mounted　表示这个 Vue 对象加载成功了
+            this.getVersion();
+        },
+        methods: {
+            //得到内容
+            getVersion:function(){
+                var api = "n-versionLog-query";
+                axios.get(uri+api).then(function(result){
+                    vue.versionLogs = result.data.data.dataList;
+                })
+            }
+
+        }
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,42 @@
+<div class="navbar navbar-inverse" id="header"> 
+ <div class="container">
+    <div class="navbar-header">
+     <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse"><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+     <a href="https://www.xiaodongbaobao.cn" class="navbar-brand logo" style="font-size:22px;" title="栋阁">栋&emsp;阁</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation" id="nav-header">
+     <ul id="novel_type" class="nav navbar-nav" v-cloak>
+		 <li v-for="bean in beans"><a :href="'/type.html?type='+bean.id" >{{bean.typeName}}</a></li>
+		 <li><a href="/abstract.html">文本摘要</a></li>
+		 <li><a href="/updateLog.html">更新日志</a></li>
+     </ul>
+     <ul  class="nav navbar-nav navbar-right">
+		<!--<li><a href="#">登录</a></li>
+		<li><a href="#">免费注册</a></li> -->
+     </ul>
+    </nav>
+  </div>
+</div>
+
+  <script>
+	var uri="https://www.xiaodongbaobao.cn/api/";
+	var aip="https://www.xiaodongbaobao.cn/aip/";
+	$(function(){
+		 var vue = new Vue({
+			el: '#novel_type',
+      data:{ beans: []},
+    	mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+                this.list();
+			},
+     	methods: {
+				list:function(){
+					var api = "n-type-query"
+					axios.get(uri+api).then(function(result) {
+						vue.beans=result.data.data;
+					})
+				}
+			}
+		});
+	 })
+  
+</script>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--#include virtual="/include/head.html"-->
+
+
+<body>
+    <!--#include virtual="/include/top.html"-->
+    <div class="container body-content">
+        <div id="app" v-cloak>
+            <el-button @click="recorderStart()" v-html="recorderText"></el-button>
+        </div>
+        <!--#include virtual="/include/footer.html"-->
+    </div>
+</body>
+<script>
+    let recorder;
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            recorderText: "录制",
+            recorderM: ''
+        },
+        mounted: function () { //mounted　表示这个 Vue 对象加载成功了
+
+        },
+        methods: {
+            //得到内容
+            recorderStart: function () {
+                if (this.recorderText == "录制") {
+                    recorder = new Recorder({
+                                        sampleBits: 16,         // 采样位数，范围8或16
+                                        sampleRate: 16000,      // 采样率，范围11025、16000、22050、24000、44100、48000
+                                        numChannels: 1,         // 声道，范围1或2   
+                                        });
+                    recorder.start();
+                    this.recorderText = "结束";
+                } else if (this.recorderText == "结束") {
+                    recorder.pause();
+                    this.recorderText = "播放";
+                } else {
+                    recorder.play();
+                }
+
+            }
+        }
+    });
+
+</script>
+
+</html>

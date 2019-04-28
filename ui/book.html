@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--#include virtual="/include/head.html"-->
+ <body>
+  
+  <!--#include virtual="/include/top.html"-->
+  <div class="container body-content" >
+    <div id="app"  v-cloak>
+        <ol class="breadcrumb hidden-xs">
+            <li><a href="https://www.xiaodongbaobao.cn" title="栋阁"><i class="fa fa-home fa-fw"></i>首页</a></li>
+            <li><a :href="'./type.html?type='+book.typeId" >{{book.typeName}}</a></li>
+            <li class="active">{{book.bookName}}</li>
+        </ol>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-2 col-xs-4 hidden-xs"><img class="img-thumbnail" :alt="book.bookName" :src="book.imgUrl"  onerror="this.src='https://novel.xiaodongbaobao.cn/image/error.png';" width="140" height="180"></div>
+                    <div class="col-md-10">
+                        <h1 class="bookTitle">{{book.bookName}}</h1>
+                        <p class="booktag">
+                            <a class="red" href="javascript:void(0)" target="_blank">{{book.author}}</a>
+                            <a class="red" :href="'./type.html?type='+book.typeId">{{book.typeName}}</a>
+                            <span class="blue" >阅读数：{{book.count+1}}</span>
+                            <span class="blue">{{book.st}}</span>
+                        </p>
+                        <p>
+                            最新章节：<a :href="'./content.html?id='+book.lastId">{{book.lastName}}</a><span class="hidden-xs"> &emsp;（{{book.updateTime}}）</span>
+                        </p>
+                        <p class="visible-xs">更新时间：{{book.updateTime}}</</p>
+                        <div class="row">
+                            <span class="col-md-8">
+                                <button class="btn btn-success" type="button"><i class="fa fa-plus fa-fw"></i>开始阅读</button>
+                            </span>
+                        </div>
+                        <hr>
+                        <p class="text-muted" id="bookIntro" style="">
+                            
+                            <img class="img-thumbnail pull-left visible-xs" style="margin:0 5px 0 0" :alt="book.bookName" :src="book.imgUrl"  onerror="this.src='https://novel.xiaodongbaobao.cn/image/error.png';" width="80" height="120">
+                            {{book.intro}}
+
+                        </p>
+
+                    </div>
+                    <div class="clear"></div>
+                </div>
+              
+
+            </div>
+        </div>
+        <div class="panel panel-danger">
+            <div class="panel-heading"><i class="fa fa-history fa-fw"></i><strong>《{{book.bookName}}》最新章节</strong></div>
+            <dl class="panel-body panel-chapterlist">
+                <dd class="col-md-4" v-for="last in lasts">
+					<a :href="'./content.html?id='+last.id">{{last.title}}</a>
+				</dd>
+            </dl>
+        </div>
+        <div class="panel panel-default" >
+            <div class="panel-heading"><i class="fa fa-list fa-fw"></i><strong>《{{book.bookName}}》全部章节目录</strong></div>
+            <dl class="panel-body panel-chapterlist">
+                <dt class="col-md-12">
+				<i class="fa fa-bookmark fa-fw">
+				</i>正文</dt>
+				<dd class="col-md-3" v-for="content in contents.dataList">
+				<a  :href="'./content.html?id='+content.id" >{{content.title}}</a>
+				</dd>
+            </dl>
+        </div>
+		<div style="width:90%;text-align:center">
+			<ul class="pagination" id="pagelink" style="margin:0 auto; display:inline-block " >
+				<li class="disabled"><span>{{contents.page}}/{{contents.totalPage}}</span></li>
+				<li v-if="contents.page != 1" ><a href="javascript:void(0)" class="pgroup" @click="changePage(1)">&lt;&lt;</a></li>
+				<li v-if="contents.page >2"> <a href="javascript:void(0)" @click="changePage(contents.page-2)">{{contents.page-2}}</a></li>
+				<li v-if="contents.page >1"> <a href="javascript:void(0)" @click="changePage(contents.page-1)">{{contents.page-1}}</a></li>
+				<li class="active"> <span>{{contents.page}}</span></li>
+				<li v-if="contents.totalPage-contents.page >0"> <a href="javascript:void(0)" @click="changePage(contents.page+1)">{{contents.page+1}}</a></li>
+				<li v-if="contents.totalPage-contents.page >1"> <a href="javascript:void(0)" @click="changePage(contents.page+2)">{{contents.page+2}}</a></li>
+				<li v-if="contents.totalPage>contents.page"><a href="javascript:void(0)" class="ngroup" @click="changePage(contents.totalPage)">&gt;&gt;</a></li>
+			</ul> 
+		</div>
+
+        <div class="panel panel-default hidden-xs">
+            <div class="panel-heading">
+                <span class="text-muted"><i class="fa fa-fire fa-fw"></i>{{book.typeName}}推荐阅读</span>
+            </div>
+            <div class="panel-body panel-friendlink">
+                <a v-for="rand in rands" :href="'./book.html?id='+rand.id">{{rand.bookname}}</a>
+            </div>
+        </div>
+     
+  </div> 
+  <!--#include virtual="/include/footer.html"-->
+  </div>
+  <script>
+  $(function(){
+		var id = getParam("id");
+		var page = getParam("page");
+		if(page == null) page = 1;
+		if(id == null) redirectPage("https://www.xiaodongbaobao.cn");
+		var vue = new Vue({
+			el: '#app',
+            data:{ 
+				book:[],
+				contents:[],
+				rands:[],
+				lasts:[],
+				page:page
+			},
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+				this.getBook();
+				this.getContent();
+				this.getLast();
+				this.addClick();
+				},
+            methods: {
+				//得到热门推荐
+				getBook:function(){
+					var api = "n-book-detail"
+					axios.get(uri+api+"?id="+id).then(function(result) {
+						vue.book=result.data.data;
+						if(vue.book == null){
+							redirectPage("https://www.xiaodongbaobao.cn");
+						} else {
+							var api2= "n-typeRand-query" 
+							axios.get(uri+api2+"?id="+vue.book.typeId).then(function(result) {
+								vue.rands = result.data.data;
+							})
+						}
+					})
+				},
+				
+				//得到章节
+				getContent:function(){
+					var api = "n-content-query"
+					axios.get(uri+api+"?id="+id+"&pageSize=100&page="+page).then(function(result) {
+						vue.contents=result.data.data;
+					})
+				},
+				//得到最后9章
+				getLast:function(){
+					var api = "n-contentLast-query"
+					axios.get(uri+api+"?id="+id).then(function(result) {
+						vue.lasts=result.data.data;
+					})
+				},
+				changePage: function(num){
+					page = num;
+					this.getContent();
+				},
+				addClick:function(){
+					var api = "n-top-add"
+					axios.get(uri+api+"?id="+id).then(function(result) {
+						console.log(result);
+					})
+				}
+		
+			}
+		});
+	 })
+  </script>
+ </body>
+</html>

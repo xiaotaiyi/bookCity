@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<!--#include virtual="/include/head.html"-->
+	<body> 
+		<!--#include virtual="/include/top.html"--> 
+		<div class="container body-content read-container"> 
+			<div id="app" v-loading="loading" v-cloak> 
+				<div>
+					<ol class="breadcrumb hidden-xs"  v-if="content.result != null"> 
+						<li><a href="https://www.xiaodongbaobao.cn" title="栋阁"><i class="fa fa-home fa-fw"></i>首页</a></li> 
+						<li><a :href="'./type.html?type='+content.result.typeId"  >{{content.result.typeName}}</a></li> 
+						<li><a :href="'./book.html?id='+content.result.bookId"  >{{content.result.bookName}}</a></li> 
+						<li class="active">{{content.result.title}}</li>
+					</ol> 
+					<div class="panel panel-default panel-readcontent" id="content" :style="'background-color:'+backColorM"> 
+					<div class="page-header text-center"> 
+						<h1 class="readTitle" :style="'color:'+fontColorM" >{{content.result.title}}</h1> 
+						<p class="text-center booktag">
+						<a class="red" :href="'./book.html?id='+content.result.bookId">
+						<i class="fa fa-list fa-fw"></i>{{content.result.bookName}}</a>
+						<a class="blue" href="javascript:void(0)">{{content.result.author}}</a> 
+						<a class="green"  @click="voiceProcess()"><i :class="voiceIcon" ></i><samp v-html="voiceText"></samp></a>
+					</div> 
+					<audio id="audioV" :src="voiceM"></audio>
+					<div style="width:100%;display:block;">
+								<div style="margin:0 auto;width:373px;">
+								<el-dropdown @command="backColor">
+									<el-button name="bcolor" id="bcolor"  type="primary" style="width:90px;height:30px;font-size:14px;padding:0px;opacity:0.8;">
+									背景色<i class="el-icon-arrow-down el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown"  style="width:90px;">
+									<el-dropdown-item style="background-color: #E9FAFF" command="#E9FAFF">默认</el-dropdown-item>
+									<el-dropdown-item style="background-color: #e3e8f7" command="#e3e8f7">淡蓝</el-dropdown-item>
+									<el-dropdown-item style="background-color: #EED8AE" command="#EED8AE">原木</el-dropdown-item>
+									<el-dropdown-item style="background-color: #daebfc" command="#daebfc">蓝色</el-dropdown-item>
+									<el-dropdown-item style="background-color: #ebeaea" command="#ebeaea">淡灰</el-dropdown-item>
+									<el-dropdown-item style="background-color: #222222" command="#222222">夜间</el-dropdown-item>
+
+									</el-dropdown-menu>
+								</el-dropdown>
+								<el-dropdown @command="fontSize">
+									<el-button name="fonttype" id="fonttype"  type="primary" style="width:90px;height:30px;font-size:14px;padding:0px;opacity:0.8;">
+									字体大小<i class="el-icon-arrow-down el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown"  style="width:90px;">
+										<el-dropdown-item command="12px">小号</el-dropdown-item> 
+										<el-dropdown-item command="14px">较小</el-dropdown-item>
+										<el-dropdown-item command="18px">中号</el-dropdown-item> 
+										<el-dropdown-item command="20px">较大</el-dropdown-item> 
+										<el-dropdown-item command="24px">大号</el-dropdown-item> 
+									</el-dropdown-menu>
+								</el-dropdown>
+								<el-dropdown @command="fontColor">
+									<el-button name="txtcolor" id="txtcolor"  type="primary" style="width:90px;height:30px;font-size:14px;padding:0px;opacity:0.8;">
+									字体颜色<i class="el-icon-arrow-down el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown" style="width:90px;">
+										<el-dropdown-item command="#000000">黑色</el-dropdown-item> 
+										<el-dropdown-item command="#ffffff">白色</el-dropdown-item>
+										<el-dropdown-item command="#ff0000">红色</el-dropdown-item>
+										<el-dropdown-item command="#006600">绿色</el-dropdown-item> 
+										<el-dropdown-item command="#0000ff">蓝色</el-dropdown-item> 
+										<el-dropdown-item command="#660000">棕色</el-dropdown-item> 
+									</el-dropdown-menu>
+								</el-dropdown>
+								<el-dropdown @command="getContent">
+									<el-button type="primary" style="width:90px;height:30px;font-size:14px;padding:0px;opacity:0.8;">
+									语种切换<i class="el-icon-arrow-down el-icon--right"></i>
+									</el-button>
+									<el-dropdown-menu slot="dropdown" >
+									<el-dropdown-item command="zh">中文简体</el-dropdown-item>
+									<el-dropdown-item command="zy">本章摘要</el-dropdown-item>
+									<el-dropdown-item command="en">Endlish</el-dropdown-item>
+									<el-dropdown-item command="kor">한국어</el-dropdown-item>
+									<el-dropdown-item command="jp">日本語</el-dropdown-item>
+									<el-dropdown-item command="cht">中文繁體</el-dropdown-item>
+									<el-dropdown-item command="wyw">文言文</el-dropdown-item>
+									</el-dropdown-menu>
+								</el-dropdown>
+								</div>
+						</div>
+						
+					<div class="panel-body" id="htmlContent" :style="'font-size:'+ fontSizeM+';color:'+fontColorM" v-html="content.result.content"></div> 
+					<p class="text-center readPager">
+					<a id="linkPrev" class="btn btn-default"  v-if="content.result.up !=null" :href="'./content.html?id='+content.result.up"><i class="fa fa-arrow-circle-left fa-fw"></i>上一章</a>
+					<a id="linkIndex" class="btn btn-default" :href="'./book.html?id='+content.result.bookId"><i class="fa fa-list fa-fw"></i>章节目录</a> 
+					<a id="linkNext" class="btn btn-default"  v-if="content.result.down !=null" :href="'./content.html?id='+content.result.down">下一章<i class="fa fa-arrow-circle-right fa-fw"></i></a> </p> 
+					</div> 
+				</div>
+			</div> 
+			<!--#include virtual="/include/footer.html"-->
+
+		</div>
+		<script src="./js/style.js"></script>  
+ </body>
+ <script>
+		var id = getParam("id");
+		
+		if(id == null) redirectPage("https://www.xiaodongbaobao.cn");
+		var vue = new Vue({
+			el: '#app',
+            data:{ 
+				content:{
+					result:{
+						content:''
+					}
+				},
+				backColorM:'#E9FAFF',
+				fontSizeM:'18px',
+				fontColorM:'#000000',
+				languageM:'zh',
+				loading:false,
+				voiceM:'',
+				voiceIcon:'el-icon-download',
+				voiceText:'读小说(汉语)'
+			},
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+				var tmpstr;
+				tmpstr = ReadCookies("bcolor");
+				if (tmpstr != "")
+				{
+					this.backColorM = tmpstr;
+				}
+				tmpstr = ReadCookies("txtcolor");
+				if (tmpstr != "")
+				{
+					this.fontColorM = tmpstr;
+				}
+				tmpstr = ReadCookies("fonttype");
+				if (tmpstr != "")
+				{
+					this.fontSizeM = tmpstr;
+				}
+				this.getContent('zh');
+			
+			},
+            methods: {
+				//得到内容
+				getContent:function(language){
+					var api = "n-content-detail"
+					this.content.result.content='数据加载中！可能有点慢!';
+					this.languageM = language;
+					this.loading = true;
+					axios.get(uri+api+"?id="+id+"&language="+language).then(function(result) {
+						vue.content = result.data.data;
+						vue.loading = false;
+					})
+				},//改背景颜色
+				backColor:function(color){
+					this.backColorM = color;
+					saveSet(this.backColorM,this.fontColorM,this.fontSizeM);
+				},//变字体大小
+				fontSize:function(size){
+					this.fontSizeM = size;
+					saveSet(this.backColorM,this.fontColorM,this.fontSizeM);
+				},//变字体颜色
+				fontColor:function(color){
+					this.fontColorM = color;
+					saveSet(this.backColorM,this.fontColorM,this.fontSizeM);
+				},
+				voiceProcess: function(){//语言处理
+					if(this.voiceM == '' && this.voiceText != "载入中" ){
+						this.voiceIcon = "el-icon-loading";
+						this.voiceText = "载入中";
+						this.getVoiceM();
+					}else if( this.voiceText != "载入中" ){
+						this.playVoiceV();
+					}
+				},
+				getVoiceM:function(){//得到语音
+					var api = "n-baiduVoice-query";
+					axios.get(uri+api+"?id="+id).then(function(result) {
+						vue.voiceM = result.data.data.url;
+						vue.voiceIcon = "fa fa-play";
+						vue.voiceText = "语音播放";
+					})
+				},
+				playVoiceV:function(){//语音播放暂停
+					var audioV = document.getElementById('audioV');
+					if( audioV.paused == true){
+						audioV.play();
+						vue.voiceIcon = "fa fa-pause";
+						vue.voiceText = "暂停播放";
+					}else{
+						audioV.pause();
+						vue.voiceIcon = "fa fa-play";
+						vue.voiceText = "继续播放";
+					}
+				}
+			}
+		});
+	 
+ </script>
+</html>

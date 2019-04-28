@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!--#include virtual="/include/head.html"-->
+ <body>
+  
+  <!--#include virtual="/include/top.html"-->
+
+ 
+  <div class="container body-content" > 
+   <div id="app" class="row"> 
+    <div class="col-md-4"> 
+     <div class="panel panel-default"> 
+      <div class="panel-heading">
+       <i class="fa fa-fire fa-fw"></i>{{typeName.typeName}}-热门推荐 
+      </div> 
+      <div class="list-group list-top"> 
+       <li class="list-group-item" v-for="hot in hots" v-cloak><i class="topNum">{{hot.i}}</i><a :href="'./book.html?id='+hot.id">{{hot.bookName}}</a> <small class="text-muted">/ {{hot.author}}</small><span class="pull-right text-muted">{{hot.count}}</span></li> 
+       
+      </div> 
+     </div> 
+    </div> 
+    <div class="col-md-8"> 
+     <div class="panel panel-default"> 
+      <div class="panel-heading">
+       <h1 class="fs-16 mg0"><i class="fa fa-list fa-fw"></i>{{typeName.typeName}}-最新更新</h1>
+      </div> 
+      <table class="table"> 
+       <tbody>
+        <tr> 
+         <th>书名</th> 
+         <th class="hidden-xs">最新章节</th> 
+         <th>作者</th> 
+         <th class="hidden-xs">更新时间</th> 
+         <th>连载状态</th> 
+        </tr>  
+        <tr v-for="book in books.dataList"> 
+         <td><a :href="'./book.html?id='+book.id">{{book.bookName}}</a></td> 
+         <td class="hidden-xs"><a class="text-muted" :href="'./content.html?id='+book.contentId">{{book.title}}</a></td> 
+         <td class="text-muted">{{book.author}}</td> 
+         <td class="hidden-xs">{{book.time}}</td> 
+         <td>{{book.st}}</td> 
+        </tr> 
+       </tbody>
+      </table> 
+     </div> 
+     <ul class="pagination" id="pagelink" style="margin:0 auto" >
+		<li class="disabled"><span>{{books.page}}/{{books.totalPage}}</span></li>
+		<li><a :href="'./type.html?type='+type+'&page=1'" class="pgroup">&lt;&lt;</a></li>
+		<li v-if="books.page >2"> <a :href="'/type.html?type='+type+'&page='+(books.page-2)">{{books.page-2}}</a></li>
+		<li v-if="books.page >1"> <a :href="'./type.html?type='+type+'&page='+(books.page-1)">{{books.page-1}}</a></li>
+		<li class="active"> <span>{{books.page}}</span></li>
+		<li v-if="books.totalPage-books.page >0"> <a :href="'./type.html?type='+type+'&page='+(books.page+1)">{{books.page+1}}</a></li>
+		<li v-if="books.totalPage-books.page >1"> <a :href="'./type.html?type='+type+'&page='+(books.page+2)">{{books.page+2}}</a></li>
+		<li><a :href="'./type.html?type='+type+'&page='+books.totalPage" class="ngroup">&gt;&gt;</a></li>
+     </ul> 
+    </div> 
+   </div> 
+    <!--#include virtual="/include/footer.html"-->
+  </div> 
+ </body>
+ <script>
+	
+	$(function(){
+		var type = getParam("type");
+		var page = getParam("page");
+		if(page == null) page = 1;
+		if(type == null) redirectPage(window.location.href+"?type=1");
+		var vue = new Vue({
+			el: '#app',
+            data:{ 
+				hots: [],
+				books:[],
+				type : type,
+				typeName:''
+				
+			},
+            mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
+				this.getBooks();
+                this.getHots();
+				this.getTypeName();
+			},
+            methods: {
+				//得到热门推荐
+				getHots:function(){
+					var api = "n-typeHot-query"
+					axios.get(uri+api+"?id="+type).then(function(result) {
+						vue.hots=result.data.data;
+					})
+				},
+				//得到分类详情和分页
+				getBooks:function(){
+					var api = "n-type-detail"
+					axios.get(uri+api+"?id="+type+"&page="+page+"&pageSize=30").then(function(result) {
+						vue.books=result.data.data;
+					})
+				},
+				//得到分类名字
+				getTypeName:function(){
+					var api = "n-typeName-query"
+					axios.get(uri+api+"?id="+type).then(function(result) {
+						vue.typeName=result.data.data;
+					})
+				}
+			
+				
+			}
+		});
+	 })
+ </script>
+</html>
