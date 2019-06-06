@@ -56,7 +56,14 @@
 			<artifactId>java-sdk</artifactId>
 			<version>4.11.0</version>
 		</dependency>
-
+		<dependency>
+ 		   <groupId>org.springframework.amqp</groupId>
+  		   <artifactId>spring-rabbit</artifactId>
+  		</dependency>
+  		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
 	</dependencies>
 
 
