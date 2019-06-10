@@ -65,7 +65,7 @@ public class NContentDetailApi implements IApiProcessService {
 			}
 			str = str.replaceAll("< br >|</br>|<br>", "<br>&emsp;&emsp;");
 			result.put("content", str);
-			redisUtil.hmset(id + "_" + language, result);
+			redisUtil.hmset(id + "_" + language, result,3600);
 		}
 
 		map.put("result", result);

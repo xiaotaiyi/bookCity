@@ -34,10 +34,7 @@ public class NNovelContent extends Model<NNovelContent> {
      * 章节名
      */
     private String title;
-    /**
-     * 地址
-     */
-    private String contentUrl;
+  
     /**
      * 创建时间
      */
@@ -80,14 +77,6 @@ public class NNovelContent extends Model<NNovelContent> {
         this.title = title;
     }
 
-    public String getContentUrl() {
-        return contentUrl;
-    }
-
-    public void setContentUrl(String contentUrl) {
-        this.contentUrl = contentUrl;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -116,7 +105,6 @@ public class NNovelContent extends Model<NNovelContent> {
         ", bookId=" + bookId +
         ", sort=" + sort +
         ", title=" + title +
-        ", contentUrl=" + contentUrl +
         ", createTime=" + createTime +
         ", updateTime=" + updateTime +
         "}";
