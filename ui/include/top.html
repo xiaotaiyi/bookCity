@@ -1,3 +1,14 @@
+<style>
+  .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus{
+  background:none;
+  }
+  .navbar-inverse .navbar-toggle{
+   border:none;
+  }
+  .navbar-collapse, .navbar-inverse .navbar-form{
+  border:none;
+  }
+</style>
 <div class="navbar navbar-inverse" id="header"> 
  <div class="container">
     <div class="navbar-header">
@@ -7,7 +18,6 @@
     <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation" id="nav-header">
      <ul id="novel_type" class="nav navbar-nav" v-cloak>
 		 <li v-for="bean in beans"><a :href="'/type.html?type='+bean.id" >{{bean.typeName}}</a></li>
-		 <li><a href="/abstract.html">文本摘要</a></li>
 		 <li><a href="/updateLog.html">更新日志</a></li>
      </ul>
      <ul  class="nav navbar-nav navbar-right">

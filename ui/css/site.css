@@ -4,9 +4,7 @@ body {
 li{
 	list-style:none;
 }
-a{
-     text-decoration: none;
-}
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding: 15px 15px;
@@ -33,7 +31,10 @@ p {
 }
 
 .navbar-inverse {
-    background: #4a4a4a;
+    background-color: #8BC6EC;
+	background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+    border: none;
+
 }
 
 .navbar-inverse .navbar-nav > li > a {
@@ -41,7 +42,8 @@ p {
 }
 
 .navbar-inverse .navbar-nav > li > a:hover {
-    background: #3a3a3a;
+    background-color: #afd9bd;
+    background-image: linear-gradient(50deg, #afd9bd 0%, #97bde1 100%);
     color: #fcfcfc;
 }
 
@@ -429,10 +431,7 @@ a.thumbnail {
     color: #3f5a93;
     border-color: #89d4ff;
 }
-.booktag a.green, .booktag span.green {
-    color: #67c23a;
-    border-color: #c2e7b0;
-}
+
 .booktag a.red, .booktag span.red {
     transition: border .3s;
     color: #bf2c24;
@@ -493,7 +492,6 @@ hr {
     .navbar-inverse {
         margin: 0;
         border: none;
-        border-bottom: 1px solid #333;
     }
 
     .body-content {

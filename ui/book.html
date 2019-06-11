@@ -11,7 +11,7 @@
             <li><a :href="'./type.html?type='+book.typeId" >{{book.typeName}}</a></li>
             <li class="active">{{book.bookName}}</li>
         </ol>
-        <div class="panel panel-default">
+        <div class="panel panel-default" v-cloak>
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-2 col-xs-4 hidden-xs"><img class="img-thumbnail" :alt="book.bookName" :src="book.imgUrl"  onerror="this.src='https://novel.xiaodongbaobao.cn/image/error.png';" width="140" height="180"></div>
@@ -29,7 +29,8 @@
                         <p class="visible-xs">更新时间：{{book.updateTime}}</</p>
                         <div class="row">
                             <span class="col-md-8">
-                                <button class="btn btn-success" type="button"><i class="fa fa-plus fa-fw"></i>开始阅读</button>
+                                <button v-if="lastRead == null" class="btn btn-success" :onclick="'toRead(\''+firstRead+'\')'" type="button"><i class="fa fa-plus fa-fw"></i>开始阅读</button>
+								<button v-else class="btn btn-success" type="button" :onclick="'toRead(\''+lastRead+'\')'"><i class="fa fa-plus fa-fw"></i>继续阅读</button>
                             </span>
                         </div>
                         <hr>
@@ -104,13 +105,16 @@
 				contents:[],
 				rands:[],
 				lasts:[],
-				page:page
+				page:page,
+				lastRead:'',
+				firstRead:''
 			},
             mounted:function(){ //mounted　表示这个 Vue 对象加载成功了
 				this.getBook();
 				this.getContent();
 				this.getLast();
 				this.addClick();
+				this.getFirst();
 				},
             methods: {
 				//得到热门推荐
@@ -143,6 +147,16 @@
 						vue.lasts=result.data.data;
 					})
 				},
+				//得到第一章
+				getFirst:function(){
+					var api = "n-bookFirst-query"
+					axios.get(uri+api+"?id="+id).then(function(result) {
+						if(result.data.data != null){
+							vue.firstRead = result.data.data.id;
+						}
+						vue.lastRead = $.cookie("L_"+id);
+					})
+				},
 				changePage: function(num){
 					page = num;
 					this.getContent();
@@ -150,13 +164,18 @@
 				addClick:function(){
 					var api = "n-top-add"
 					axios.get(uri+api+"?id="+id).then(function(result) {
-						console.log(result);
+						
 					})
 				}
 		
 			}
 		});
 	 })
+	 function toRead(id){
+		if(id != null && id != ''){
+			redirectPage("./content.html?id="+id);
+		}
+	 }
   </script>
  </body>
 </html>

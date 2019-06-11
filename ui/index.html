@@ -57,8 +57,7 @@
       color: #C40000;
    }
 
-   ul {
-      margin: 0;
+   #notice_ul {
       padding: 0;
       margin-left: 10px;
    }
@@ -73,7 +72,7 @@
                <span>最新告示</span>
             </div>
             <div class="marquee_box">
-               <ul class="marquee_list" :class="{marquee_top:animate}">
+               <ul id="notice_ul" class="marquee_list" :class="{marquee_top:animate}">
                   <li v-for="(notice, index) in tops.notice">
                      <span v-if="notice.contentUrl == '' " class="no_changeLine">{{notice.content}}</span>
                      <a v-else :href="notice.contentUrl" class="no_changeLine">{{notice.content}}</a>
@@ -86,7 +85,7 @@
                <div class="panel panel-default hidden-xs">
                   <div class="panel-heading">
                      <div class="row">
-                        <h5 class="pull-left col-xs-4"><i class="fa fa-diamond fa-fw"></i>小说推荐</h5>
+                        <h5 class="pull-left col-xs-4"><i class="fa fa-heart" style="color:#FC9D99">&nbsp;</i>站长推荐</h5>
                         <div class="col-md-6 col-xs-8 pull-right">
                            <div class="input-group">
                               <div
@@ -303,6 +302,7 @@
          },
          esaySearch:function(){
             key = encodeURI(encodeURI(vue.searchKey));
+            console.log(key);
             redirectPage("https://www.xiaodongbaobao.cn/search.html?searchKey="+key);
          }
 

@@ -95,7 +95,6 @@
  </body>
  <script>
 		var id = getParam("id");
-		
 		if(id == null) redirectPage("https://www.xiaodongbaobao.cn");
 		var vue = new Vue({
 			el: '#app',
@@ -144,6 +143,7 @@
 					axios.get(uri+api+"?id="+id+"&language="+language).then(function(result) {
 						vue.content = result.data.data;
 						vue.loading = false;
+						$.cookie("L_"+vue.content.result.bookId,vue.content.result.id);
 					})
 				},//改背景颜色
 				backColor:function(color){

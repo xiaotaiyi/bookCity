@@ -28,8 +28,97 @@
  </head>
  <style>
 [v-cloak] {display: none;}
+    .heart {
+      width: 30px;
+      height: 10px;
+      position: fixed;
+      color: #f00;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .heart:after {
+      top: -5px;
+    }
+
+    .heart:before {
+      left: -5px;
+    }
 </style>
  <script>
 //初始化一些参数
 var uri="https://www.xiaodongbaobao.cn/api/";
+    (function (window, document, undefined) {
+      var hearts = [];
+      var timer = 0;
+      window.requestAnimationFrame = (function () {
+        return window.requestAnimationFrame ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame ||
+          window.oRequestAnimationFrame ||
+          window.msRequestAnimationFrame ||
+          function (callback) {
+            setTimeout(callback, 1000 / 60);
+          }
+      })();
+      init();
+      function init() {
+        attachEvent();
+        gameloop();
+      }
+      function gameloop() {
+        for (var i = 0; i < hearts.length; i++) {
+          if (hearts[i].alpha <= 0) {
+            document.body.removeChild(hearts[i].el);
+            hearts.splice(i, 1);
+            continue;
+          }
+          hearts[i].y--;
+          hearts[i].scale += 0.004;
+          hearts[i].alpha -= 0.008;
+          hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ");color:" + hearts[i].color;
+        }
+        requestAnimationFrame(gameloop);
+      }
+      function attachEvent() {
+        var old = typeof window.onclick === "function" && window.onclick;
+        window.onclick = function (event) {
+          old && old();
+          createHeart(event);
+        }
+      }
+      function createHeart(event) {
+
+        var rules = ['富强', '民主', '文明', '和谐', '自由', '平等', '公正', '法治', '爱国', '敬业', '诚信', '友善'];
+        var d = document.createElement("div");
+        if (timer == 12) timer = 0;
+        d.innerHTML = rules[timer++];
+        d.className = "heart";
+        hearts.push({
+          el: d,
+          x: event.clientX - 5,
+          y: event.clientY - 5,
+          scale: 1,
+          alpha: 1,
+          color: randomColor()
+        });
+        document.body.appendChild(d);
+      }
+      function css(css) {
+        var style = document.createElement("style");
+        style.type = "text/css";
+        try {
+          style.appendChild(document.createTextNode(css));
+        } catch (ex) {
+          style.styleSheet.cssText = css;
+        }
+        document.getElementsByTagName('head')[0].appendChild(style);
+      }
+      function randomColor() {
+        return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      }
+    })(window, document);
+
  </script> 
